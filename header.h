@@ -4,6 +4,7 @@
 #include "iostream"
 #include "algorithm"
 #include "math.h"
+#include "random"
 
 using namespace std;
 
@@ -11,6 +12,8 @@ using namespace std;
 #define S_CONST   1
 #define CONST_E   2.71828184
 #define P_DECAY_RATE    1
+
+float RewardGenerated;
 
 class Packets_t
 {
@@ -31,6 +34,10 @@ class Lists_t
   Packets_t* start;
   Packets_t* end;
 public:
+  Lists_t()
+  {
+    start = end = packets = NULL;
+  }
 
   void InQueue(Packets_t* packet)
   {
@@ -54,6 +61,7 @@ public:
 
   float LastVal()
   {
+    if(!start) return 0;
     return start->value;
   }
 

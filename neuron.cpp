@@ -9,6 +9,8 @@ Neurite_t<Neuron_t, Neuron_t>* Connect_Neurons(Neuron_t* start, Neuron_t* end)
   conn->End = end;
   start->Axions.push_back(conn);
   end->Dendrites.push_back(conn);
+
+  printf("[%d->%d]", start->id, end->id);
   return conn;
 }
 
@@ -23,7 +25,7 @@ Neurite_t<Neuron_t, Neuron_t>* Connect_Neurons(Neuron_t* start, Neuron_t* end, f
 template<class In, class Out>
 Neurite_t<In, Out>::Neurite_t()
 {
-
+  var = 0;
 }
 
 template<class In, class Out>
@@ -31,15 +33,17 @@ Neurite_t<In, Out>::Neurite_t(float weight, float myelin)
 {
   Weight = weight;
   Myelin = myelin;
+  var = 0;
 }
 
 template<class In, class Out>
 void Neurite_t<In, Out>::WeightPostProcessor()  // Adjusts weights; Prev means neurite start
 {
-  if(!this->End->LocalReward)
+  /*if(this->End->inVar < this->End->Dendrites.size() && !this->End->Lock)
   {
     this->End->ComputeLocalReward();
-  }
+  }*/
+
   float lr = (W_CONST * this->End->LocalReward)/(1); // we need to compute the amount to add to weight
   if(!(this->End->softmax_tmp)) // If Softmax is not precomputed
   {
@@ -51,11 +55,12 @@ void Neurite_t<In, Out>::WeightPostProcessor()  // Adjusts weights; Prev means n
   }
   this->softmax_tmp = pow(CONST_E, this->Start->ComputeOutput());   // Compute e^(output of this specific prev neuron)
   this->softmax_tmp /= this->End->softmax_tmp;  // Get the softmax Ratio
-  this->Start->inVar += 1;   // Tell the start neron that another output neuron has been updated
-  this->End->outVar += 1;    // Tell the end neuron that another input neuron has been updated
+  this->Start->outVar += 1;   // Tell the start neron that another output neuron has been updated
+  this->End->inVar += 1;    // Tell the end neuron that another input neuron has been updated
   lr *= this->softmax_tmp; // Compute amount to add to weight
   this->softmax_tmp = lr;  // set this computed amount in this softmax temp variable
   this->Weight += lr;    // Add the amount to the weight
+  //this->End->LocalReward = 0;
 }
 
 template<class In, class Out>
@@ -90,11 +95,16 @@ Soma_t::Soma_t()
   Output = 0;
   OldOutput = 0;
   TPotential = 0;
+  LocalReward = LocalReward_tmp = 0;
 }
 
 Soma_t::Soma_t(float threshold)
 {
-  Soma_t();
+  Sum = 0;
+  Output = 0;
+  OldOutput = 0;
+  TPotential = 0;
+  LocalReward = LocalReward_tmp = 0;
   TPotential = threshold;
 }
 
@@ -111,12 +121,23 @@ void Soma_t::PotentialDecrement(float val)
 /**********************************//* NEURON_T DEFINITIONS *//**********************************/
 Neuron_t::Neuron_t()
 {
-
+  id = ++nnid;
+  type = 0;
+  inVar = outVar = Var2 = 0;
 }
 
 Neuron_t::Neuron_t(float threshold) : Soma_t(threshold)
 {
+  id = ++nnid;
+  type = 0;
+  inVar = outVar = Var2 = 0;
+}
 
+Neuron_t::Neuron_t(float threshold, int Ntype) : Soma_t(threshold)
+{
+  id = ++nnid;
+  type = type;
+  inVar = outVar = Var2 = 0;
 }
 
 float Neuron_t::ComputeOutput()
@@ -126,10 +147,14 @@ float Neuron_t::ComputeOutput()
 
 float Neuron_t::ComputeLocalReward() // Computes local reward for a given neuron by getting softmax results from all outgoing neurons
 {
+  //if(this->Lock) return this->LocalReward;
+  this->Lock = 1;
+  printf("[%d, %d]", Axions.size(), id);
   for(int i = 0; i < this->Axions.size(); i++)
   {
     this->Axions[i]->WeightPostProcessor(); // Process the weights on outgoing neurons, which also computes softmax contributions.
     this->LocalReward += this->Axions[i]->softmax_tmp * S_CONST;    // add this ratio with some constant to localreward of prev neuron
   }
+  this->Lock = 0;
   return this->LocalReward;
 }

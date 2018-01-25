@@ -8,7 +8,7 @@ class Neurite_t // Axons or Dendrites
   float var;
   Lists_t activations;
   Lists_t timers;
-  
+
 public:
   In* Start;
   Out* End;
@@ -19,6 +19,7 @@ public:
   float Role; // From InSource to OutSource
 
   float softmax_tmp;
+  float tmp_Out;
 
   Neurite_t();
   Neurite_t(float weight, float myelin);
@@ -58,6 +59,7 @@ public:
   vector<float> FinalInputs;
 
   float LocalReward;
+  float LocalReward_tmp;
 
   bool Fired;
 
@@ -74,19 +76,30 @@ public:
 class Neuron_t : public Soma_t
 {
 public:
+  int   type;
   int   inVar;
   int   outVar;
+  int   Var2;
+  int   id;
+  int   Lock;
   vector<Neurite_t<Neuron_t, Neuron_t>*>  Dendrites;
   vector<Neurite_t<Neuron_t, Neuron_t>*>  Axions;
 
   Neuron_t();
   Neuron_t(float threshold);
+  Neuron_t(float threshold, int Ntype);
   float ComputeLocalReward();
   float ComputeOutput();
 };
 
+int nnid = 0, RewardedNeurons = 0, Neurons = 0;
+
 Neurite_t<Neuron_t, Neuron_t>* Connect_Neurons(Neuron_t* start, Neuron_t* end);
 
 Neurite_t<Neuron_t, Neuron_t>* Connect_Neurons(Neuron_t* start, Neuron_t* end, float weight, float myelin);
+
+Neuron_t* RewardFeederNeuron;
+vector<Neuron_t*>  NeuralNet, input_layer, output_layer;
+vector<Neurite_t<Neuron_t, Neuron_t>*> GreyMatter;
 
 //void Neurite_WeightPostProcessor(Neurite_t<Neuron_t, Neuron_t>* neurite);  // Adjusts weights; Prev means neurite start

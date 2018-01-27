@@ -184,12 +184,22 @@ void TimeDecayThread()
 int main()
 {
   NeuralNet_init();
+  RewardGenerated = 0;
+  for(int i = 0; i < input_layer.size(); i++)
+  {
+    float tmp;
+    cout<<"\nInput number "<<i<<"> ";
+    cin>>tmp;
+    input_layer[i]->ValSum = tmp;
+    input_layer[i]->Output = tmp;
+    input_layer[i]->Fired = true;
+  }
   thread forwardPropogator(ForwardPropogatorThread);
   thread timeDecayThread(TimeDecayThread);
   //thread inputThread(InputThread);
   thread outputThread(OutputThread);
-  RewardGenerated = 0;
-  for(int i = 0; i < 1; i++)
+
+  for(int i = 0; i; i++)
   {
     /*thread learnerThread(LearnerThread);
     learnerThread.join();
@@ -200,7 +210,7 @@ int main()
     LearnerThread();
     Global_Teacher();
     Global_Renew();
-    printf("\nDone!");
+    //printf("\nDone!");
   }
   forwardPropogator.join();
   return 0;

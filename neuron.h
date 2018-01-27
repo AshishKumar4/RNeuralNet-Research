@@ -39,12 +39,15 @@ protected:
   float ActivationFunction()
   {
     ValSum = Sum;   // Function to be applied on the Summation
+    ValSum = Sigmoid(ValSum);
     if(ValSum < TPotential)
     {
       Fired = false;
+      Output = 0;
       return 0;    // Rectified Linear Unit
     }
     Fired = true;
+    Output = ValSum;
     return ValSum;
   }
 

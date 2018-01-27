@@ -67,7 +67,7 @@ template<class In, class Out>
 void Neurite_t<In, Out>::InQueue(float val)
 {
   activations.InQueue(val);
-  timers.InQueue(Myelin);
+  timers.InQueue(var + 5);
 }
 
 template<class In, class Out>
@@ -80,11 +80,14 @@ float Neurite_t<In, Out>::DeQueue()
 template<class In, class Out>
 bool Neurite_t<In, Out>::TimerTicks()
 {
+  //return true;
   var += P_DECAY_RATE;
-  if(timers.LastVal() == var)
+  if(timers.LastVal() == -1) return false;
+  if(timers.LastVal() <= var)
   {
     return true;
   }
+//  printf("<%f, %f>", timers.LastVal(), var);
   return false;
 }
 
@@ -96,6 +99,7 @@ Soma_t::Soma_t()
   OldOutput = 0;
   TPotential = 0;
   LocalReward = LocalReward_tmp = 0;
+  Fired = false;
 }
 
 Soma_t::Soma_t(float threshold)
@@ -106,6 +110,8 @@ Soma_t::Soma_t(float threshold)
   TPotential = 0;
   LocalReward = LocalReward_tmp = 0;
   TPotential = threshold;
+  Fired = false;
+  printf("{%f}", threshold);
 }
 
 float Soma_t::Calc()    // Summation and Function Applier

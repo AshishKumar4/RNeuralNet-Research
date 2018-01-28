@@ -3,6 +3,7 @@
 #include "random"
 #include "stdlib.h"
 #include <thread>         // std::thread
+#include <boost/tuple/tuple.hpp>
 
 #define MAX_DENDRITES 16
 #define MAX_AXIONS    16
@@ -11,14 +12,14 @@ default_random_engine gen;
 
 void NeuralNet_init()
 {
-  printf("\nSizeof Neuron_t: %x\nBuilding Neurons, Enter Power, Multiple, Base: \n>", sizeof(Neuron_t));
+  printf("\nSizeof Neuron_t: %x\nBuilding Neurons, Enter Power, Base, Multiple, : \n>", sizeof(Neuron_t));
 
   uint32_t power;
   cin>>power;
-  uint32_t multiple;
-  cin>>multiple;
   uint32_t base;
   cin>>base;
+  uint32_t multiple;
+  cin>>multiple;
 
   if(!power) power = 4;
   if(!base) base = 15;
@@ -28,14 +29,19 @@ void NeuralNet_init()
   Neuron_t* tmpn;
   Neurite_t<Neuron_t, Neuron_t>* tmpd;
 
-  normal_distribution<double> dis(0.6, 0.3);
+  normal_distribution<double> dis(0.7, 0.2);
+
+  gp<<"plot '-' \n";
+  vector<float> vec;
 
   for(uint32_t i = 0; i < Neurons; i++ )
   {
     tmpn = new Neuron_t(dis(gen));
     NeuralNet.push_back(tmpn);
+    vec.push_back(tmpn->TPotential);
     //printf("\t%d", tmpn->id);
   }
+  gp.send1d(vec);
 
   uint32_t rand1, randnum;
 
@@ -43,10 +49,15 @@ void NeuralNet_init()
 
   printf("\nLinking Neural Networks, Building Random Connections...");
 
+  vec.clear();
+  gp<<"plot '-' \n";
+
   uint32_t tmp11;
+
+  Neurite_t<Neuron_t, Neuron_t>* tdnn;
   for(uint32_t i = 0; i < Neurons - 1; i++ )
   {
-    normal_distribution<double> dis2(0, 1/(pow(MAX_DENDRITES, 0.5)));
+    normal_distribution<double> dis2(0, 1/(powf(MAX_DENDRITES, 0.5)));
     for(uint32_t j = 0; j < MAX_AXIONS; j++)
     {
       tmp11 = 0;
@@ -70,9 +81,13 @@ void NeuralNet_init()
           goto back;
         }
       }
-      GreyMatter.push_back(Connect_Neurons(NeuralNet[i], NeuralNet[rand1], dis2(gen), rand()));//*/
+      tdnn = Connect_Neurons(NeuralNet[i], NeuralNet[rand1], dis2(gen), rand());
+      GreyMatter.push_back(tdnn);//*/
+      vec.push_back(tdnn->Weight);
     }
   }
+  gp.send1d(vec);
+
   printf("\nNeural Network setup complete. %d Neurons\nVerification: \n", Neurons);
   for(uint32_t i = 0; i < Neurons - 1; i++)
   {
@@ -145,7 +160,18 @@ void NeuralNet_init()
 
 void InputThread()
 {
-
+  while(1)
+  {
+    for(int i = 0; i < input_layer.size(); i++)
+    {
+      float tmp;
+      cout<<"\nInput number "<<i<<"> ";
+      cin>>tmp;
+      input_layer[i]->ValSum = tmp;
+      input_layer[i]->Output = tmp;
+      input_layer[i]->Fired = true;
+    }
+  }
 }
 
 void OutputThread()
@@ -196,7 +222,7 @@ int main()
   }
   thread forwardPropogator(ForwardPropogatorThread);
   thread timeDecayThread(TimeDecayThread);
-  //thread inputThread(InputThread);
+  thread inputThread(InputThread);
   thread outputThread(OutputThread);
 
   for(int i = 0; i; i++)

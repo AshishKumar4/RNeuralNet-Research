@@ -1,0 +1,4 @@
+C:\Users\Ashish Kumar SIngh\Desktop\Projects\RNN Research\Main.cpp:6:30: fatal error: gnuplot-iostream.h: No such file or directory
+ #include "gnuplot-iostream.h"
+                              ^
+compilation terminated.

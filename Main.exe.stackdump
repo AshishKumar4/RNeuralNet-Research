@@ -1,7 +1,0 @@
-Exception: STATUS_ACCESS_VIOLATION at eip=00403155
-eax=00000000 ebx=200A0940 ecx=FFEACB34 edx=00000000 esi=200BA094 edi=FFEAFFE8
-ebp=FFEACCD8 esp=FFEACCB0 program=C:\Users\ASHISH~1\AppData\Local\Temp\Main.exe, pid 4612, thread unknown (0x36B0)
-cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
-Stack trace:
-Frame     Function  Args
-End of stack trace

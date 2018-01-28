@@ -5,15 +5,21 @@
 #include "algorithm"
 #include "math.h"
 #include "random"
+#include "gnuplot-iostream.h"
+
+Gnuplot gp, gp2;
 
 using namespace std;
 
 #define W_CONST   1
 #define S_CONST   1
 #define CONST_E   2.71828184
-#define P_DECAY_RATE    1
+#define P_DECAY_RATE    0.001
+#define P_TIME_TICKS    1
 
 float RewardGenerated = 0;
+
+vector<float>  plotVecNN;
 
 class Packets_t
 {

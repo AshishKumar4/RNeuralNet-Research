@@ -32,14 +32,14 @@ public:
 
 class Soma_t
 {
-  float TPotential;
 
 protected:
 
   float ActivationFunction()
   {
     ValSum = Sum;   // Function to be applied on the Summation
-    ValSum = Sigmoid(ValSum);
+    ValSum = ValSum;//powf(CONST_E, ValSum)/powf(CONST_E, CurrentInputs.size());//tanhf(ValSum)*2;
+   // return ValSum;
     if(ValSum < TPotential)
     {
       Fired = false;
@@ -52,6 +52,8 @@ protected:
   }
 
 public:
+  float TPotential;
+
   float Sum;
   float ValSum;
 

@@ -81,13 +81,13 @@ template<class In, class Out>
 bool Neurite_t<In, Out>::TimerTicks()
 {
   //return true;
-  var += P_DECAY_RATE;
+  var += P_TIME_TICKS;
   if(timers.LastVal() == -1) return false;
   if(timers.LastVal() <= var)
   {
     return true;
   }
-//  printf("<%f, %f>", timers.LastVal(), var);
+  //printf("<%f, %f>", timers.LastVal(), var);
   return false;
 }
 
@@ -121,7 +121,7 @@ float Soma_t::Calc()    // Summation and Function Applier
 
 void Soma_t::PotentialDecrement(float val)
 {
-  ValSum -= val;
+  ValSum -= ValSum*val;
 }
 
 /**********************************//* NEURON_T DEFINITIONS *//**********************************/
@@ -130,6 +130,7 @@ Neuron_t::Neuron_t()
   id = ++nnid;
   type = 0;
   inVar = outVar = Var2 = 0;
+  plotVecNN.push_back(0);
 }
 
 Neuron_t::Neuron_t(float threshold) : Soma_t(threshold)
@@ -137,6 +138,7 @@ Neuron_t::Neuron_t(float threshold) : Soma_t(threshold)
   id = ++nnid;
   type = 0;
   inVar = outVar = Var2 = 0;
+  plotVecNN.push_back(0);
 }
 
 Neuron_t::Neuron_t(float threshold, int Ntype) : Soma_t(threshold)
@@ -144,6 +146,7 @@ Neuron_t::Neuron_t(float threshold, int Ntype) : Soma_t(threshold)
   id = ++nnid;
   type = type;
   inVar = outVar = Var2 = 0;
+  plotVecNN.push_back(0);
 }
 
 float Neuron_t::ComputeOutput()

@@ -5,6 +5,23 @@
         "xstring": "cpp",
         "random": "cpp",
         "xlocale": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "initializer_list": "cpp",
+        "type_traits": "cpp",
+        "xutility": "cpp",
+        "istream": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp",
+        "xfunctional": "cpp",
+        "xstddef": "cpp",
+        "xtr1common": "cpp",
+        "thread": "cpp",
+        "iostream": "cpp"
     }
 }

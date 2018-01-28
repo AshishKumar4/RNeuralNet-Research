@@ -42,9 +42,9 @@ protected:
    // return ValSum;
     if(ValSum < TPotential)
     {
-      Fired = false;
-      Output = 0;
-      return 0;    // Rectified Linear Unit
+      Fired = true;//false;
+      Output = (expf(ValSum - TPotential) - 1) * A_CONST;
+      return Output;    // Exponential Linear Unit
     }
     Fired = true;
     Output = ValSum;

@@ -26,6 +26,7 @@ template<class In, class Out>
 Neurite_t<In, Out>::Neurite_t()
 {
   var = 0;
+  Myelin = (rand()%10) + 1;
 }
 
 template<class In, class Out>
@@ -67,7 +68,7 @@ template<class In, class Out>
 void Neurite_t<In, Out>::InQueue(float val)
 {
   activations.InQueue(val);
-  timers.InQueue(var + 5);
+  timers.InQueue(var + Myelin + 2);
 }
 
 template<class In, class Out>

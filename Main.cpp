@@ -81,7 +81,7 @@ void NeuralNet_init()
           goto back;
         }
       }
-      tdnn = Connect_Neurons(NeuralNet[i], NeuralNet[rand1], dis2(gen), rand());
+      tdnn = Connect_Neurons(NeuralNet[i], NeuralNet[rand1], dis2(gen), rand() % 20);
       GreyMatter.push_back(tdnn);//*/
       vec.push_back(tdnn->Weight);
     }

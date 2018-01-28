@@ -114,7 +114,7 @@ void Global_Refresher(vector<Neuron_t*> nnet)   // Control the refreshmet of all
 
 void Global_ForwardProcessor(vector<Neurite_t<Neuron_t, Neuron_t>*> dnet)
 {
-  printf("\n.");
+  //printf("\n.");
   gp << "plot '-' \n";
   for(int i = 0; i < dnet.size(); i++)
   {
@@ -123,7 +123,7 @@ void Global_ForwardProcessor(vector<Neurite_t<Neuron_t, Neuron_t>*> dnet)
     if(dnet[i]->Start->Fired)
     {
       plotVecNN[dnet[i]->Start->id - 1] = dnet[i]->Start->Output;
-      printf("{%d->%d(%f)}", dnet[i]->Start->id, dnet[i]->End->id, dnet[i]->Start->Output);
+      //printf("{%d->%d(%f)}", dnet[i]->Start->id, dnet[i]->End->id, dnet[i]->Start->Output);
       dnet[i]->InQueue(dnet[i]->Start->Output * dnet[i]->Weight);
       ++dnet[i]->Start->outVar;
       if(dnet[i]->Start->outVar == dnet[i]->Start->Axions.size())
@@ -139,7 +139,7 @@ void Global_ForwardProcessor(vector<Neurite_t<Neuron_t, Neuron_t>*> dnet)
     if(dnet[i]->TimerTicks())   // As the packets near the destination, transfer them from the neurite ends to the neurons
     {
       float val = dnet[i]->DeQueue();
-      printf("{(%f)%d->%d}", val, dnet[i]->Start->id, dnet[i]->End->id);
+      //printf("{(%f)%d->%d}", val, dnet[i]->Start->id, dnet[i]->End->id);
       dnet[i]->End->CurrentInputs.push_back(val);
       dnet[i]->tmp_Out = val;
       dnet[i]->End->Sum += val;

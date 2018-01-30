@@ -11,12 +11,17 @@ Gnuplot gp, gp2;
 
 using namespace std;
 
-#define W_CONST   1
+#define W_CONST   0.01
 #define S_CONST   1
 #define A_CONST   1
 #define CONST_E   2.71828184
 #define P_DECAY_RATE    0.001
 #define P_TIME_TICKS    1
+
+
+#define MAX_DENDRITES 16
+#define MAX_AXIONS    16
+
 
 float RewardGenerated = 0;
 

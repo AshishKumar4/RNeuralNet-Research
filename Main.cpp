@@ -5,9 +5,6 @@
 #include <thread>         // std::thread
 #include <boost/tuple/tuple.hpp>
 
-#define MAX_DENDRITES 16
-#define MAX_AXIONS    16
-
 default_random_engine gen;
 
 void NeuralNet_init()
@@ -29,9 +26,9 @@ void NeuralNet_init()
   Neuron_t* tmpn;
   Neurite_t<Neuron_t, Neuron_t>* tmpd;
 
-  normal_distribution<double> dis(0.7, 0.2);
+  normal_distribution<double> dis(2, 0.5);
 
-  gp<<"plot '-' \n";
+  gp2<<"plot '-' \n";
   vector<float> vec;
 
   for(uint32_t i = 0; i < Neurons; i++ )
@@ -41,7 +38,7 @@ void NeuralNet_init()
     vec.push_back(tmpn->TPotential);
     //printf("\t%d", tmpn->id);
   }
-  gp.send1d(vec);
+  gp2.send1d(vec);
 
   uint32_t rand1, randnum;
 
@@ -134,9 +131,9 @@ void NeuralNet_init()
   {
     tmpn = new Neuron_t(0, 1);
     output_layer.push_back(tmpn);
-    tmpn->LocalReward = 10;
-    GreyMatter.push_back(Connect_Neurons(tmpn, RewardFeederNeuron, 0, 1));
-    for(int j = 0; j < 5; j++)
+    tmpn->LocalReward = 0;
+    GreyMatter.push_back(Connect_Neurons(tmpn, RewardFeederNeuron, 1, 1));
+    for(int j = 0; j < 10; j++)
     {
       tmp11 = 0;
       back3:
@@ -144,8 +141,8 @@ void NeuralNet_init()
       if(tmp11 == Neurons)  break;
       if(find(ttn.begin(), ttn.end(), NeuralNet[rand1]) == ttn.end())
       {
-        normal_distribution<double> dis2(0, 1/(pow(MAX_AXIONS, 0.5)));
-        GreyMatter.push_back(Connect_Neurons(NeuralNet[rand1], tmpn, 0, 1));
+        //normal_distribution<double> dis2(0, 1/(pow(MAX_AXIONS, 0.5)));
+        GreyMatter.push_back(Connect_Neurons(NeuralNet[rand1], tmpn, 1, 1));
         ttn.push_back(NeuralNet[rand1]);
       }
       else
@@ -155,6 +152,11 @@ void NeuralNet_init()
       }
     }
   }
+/**
+  for(int i = 0; i < out; i++)
+  {
+    NeuralNet.push_back(output_layer[i]);
+  }*/
   cout<<"\nOutput Layer produced... Neural Network Completed!";
 }
 
@@ -171,6 +173,8 @@ void InputThread()
       input_layer[i]->Output = tmp;
       input_layer[i]->Fired = true;
     }
+    cout<<"\nEnter Reward: ";
+    cin>>RewardGenerated;
   }
 }
 
@@ -178,7 +182,7 @@ void OutputThread()
 {
   while(1)
   {
-
+    Global_OutputGenerator(output_layer);
   }
 }
 
@@ -195,7 +199,7 @@ void LearnerThread()
   //while(1)
   {
     Global_Adjuster(input_layer);
-    printf("\n\nDOne!!");
+    //printf("\n\nDOne!!");
   }
 }
 
@@ -225,7 +229,7 @@ int main()
   thread inputThread(InputThread);
   thread outputThread(OutputThread);
 
-  for(int i = 0; i; i++)
+  while(1)
   {
     /*thread learnerThread(LearnerThread);
     learnerThread.join();

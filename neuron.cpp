@@ -46,16 +46,18 @@ void Neurite_t<In, Out>::WeightPostProcessor()  // Adjusts weights; Prev means n
   }*/
 
   float lr = (W_CONST * this->End->LocalReward)/(1); // we need to compute the amount to add to weight
-  if(!(this->End->softmax_tmp)) // If Softmax is not precomputed
+  if(lr == 0) return;
+  printf("{%f}", lr);
+ /* if((this->End->softmax_tmp) == 0) // If Softmax is not precomputed
   {
     for(int i = 0; i < this->End->Dendrites.size(); i++)
     {
       // Compute the softmax summation by summing e^(output of all prev neurons).
-      this->End->softmax_tmp += pow(CONST_E, this->End->Dendrites[i]->Start->ComputeOutput());
+      this->End->softmax_tmp += expf(this->End->Dendrites[i]->Start->OldOutput);
     }
   }
-  this->softmax_tmp = pow(CONST_E, this->Start->ComputeOutput());   // Compute e^(output of this specific prev neuron)
-  this->softmax_tmp /= this->End->softmax_tmp;  // Get the softmax Ratio
+  this->softmax_tmp = expf(this->Start->OldOutput);   // Compute e^(output of this specific prev neuron)
+  this->softmax_tmp /= this->End->softmax_tmp;  // Get the softmax Ratio*/
   this->Start->outVar += 1;   // Tell the start neron that another output neuron has been updated
   this->End->inVar += 1;    // Tell the end neuron that another input neuron has been updated
   lr *= this->softmax_tmp; // Compute amount to add to weight

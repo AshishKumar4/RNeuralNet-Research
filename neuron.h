@@ -32,7 +32,6 @@ public:
 
 class Soma_t
 {
-
 protected:
 
   float ActivationFunction()

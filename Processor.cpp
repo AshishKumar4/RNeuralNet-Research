@@ -17,12 +17,17 @@ void Global_Adjuster(vector<Neuron_t*> input_layer)   // Decrement myelin conjug
 void Global_RewardSpreader(Neuron_t* RewardFeederNeuron, float Reward)
 {
   if(RewardFeederNeuron->Var2 >= RewardFeederNeuron->Dendrites.size())
-  {
+  {/*
     if(!RewardFeederNeuron->LocalReward)
     {
       RewardFeederNeuron->LocalReward = RewardFeederNeuron->LocalReward_tmp;
       //RewardFeederNeuron->LocalReward_tmp = 0;
-    }
+    }*/
+    return;
+  }
+
+  if(!Reward)
+  {
     return;
   }
 
@@ -30,7 +35,7 @@ void Global_RewardSpreader(Neuron_t* RewardFeederNeuron, float Reward)
   RewardFeederNeuron->softmax_tmp = 0;
   for(int i = 0; i < RewardFeederNeuron->Dendrites.size(); i++)
   {
-    RewardFeederNeuron->softmax_tmp += (expf(RewardFeederNeuron->Dendrites[i]->Start->OldOutput));//RewardFeederNeuron->Dendrites[i]->Weight;
+    RewardFeederNeuron->softmax_tmp += (expf(abs(RewardFeederNeuron->Dendrites[i]->Start->OldOutput)));//RewardFeederNeuron->Dendrites[i]->Weight;
     //RewardFeederNeuron->Dendrites[i]->Start->LocalReward_tmp += Reward * (expf(RewardFeederNeuron->Dendrites[i]->Start->OldOutput) / expf(RewardFeederNeuron->OldOutput));//RewardFeederNeuron->Dendrites[i]->Weight;
 
 //    printf("(%d)", RewardFeederNeuron->Dendrites[i]->Start->id);
@@ -38,14 +43,14 @@ void Global_RewardSpreader(Neuron_t* RewardFeederNeuron, float Reward)
   
   for(int i = 0; i < RewardFeederNeuron->Dendrites.size(); i++)
   {
-    RewardFeederNeuron->Dendrites[i]->softmax_tmp = (expf(RewardFeederNeuron->Dendrites[i]->Start->OldOutput) / RewardFeederNeuron->softmax_tmp);
-    RewardFeederNeuron->Dendrites[i]->Start->LocalReward_tmp += Reward * RewardFeederNeuron->Dendrites[i]->softmax_tmp;
+    RewardFeederNeuron->Dendrites[i]->softmax_tmp = (expf(abs(RewardFeederNeuron->Dendrites[i]->Start->OldOutput)) / RewardFeederNeuron->softmax_tmp);
+    RewardFeederNeuron->Dendrites[i]->Start->LocalReward += Reward * RewardFeederNeuron->Dendrites[i]->softmax_tmp;
    // printf("{%d->%d, %f}", RewardFeederNeuron->Dendrites[i]->Start->id, RewardFeederNeuron->id, RewardFeederNeuron->Dendrites[i]->softmax_tmp);
     RewardFeederNeuron->Var2 += 1;
   }
   for(int i = 0; i < RewardFeederNeuron->Dendrites.size(); i++)
   {
-    Global_RewardSpreader(RewardFeederNeuron->Dendrites[i]->Start, RewardFeederNeuron->Dendrites[i]->Start->LocalReward_tmp);
+    Global_RewardSpreader(RewardFeederNeuron->Dendrites[i]->Start, RewardFeederNeuron->Dendrites[i]->Start->LocalReward);
   }
 }
 
@@ -116,7 +121,7 @@ void Global_Refresher(vector<Neuron_t*> nnet)   // Control the refreshmet of all
   vector<float> vec;
   for(int i = 0; i < nnet.size(); i++)
   {
-    nnet[i]->PotentialDecrement(P_DECAY_RATE);
+   // nnet[i]->PotentialDecrement(P_DECAY_RATE);
     nnet[i]->ComputeOutput();
     /*if(nnet[i]->Fired)
       vec.push_back((nnet[i]->ValSum));
@@ -128,11 +133,13 @@ void Global_Refresher(vector<Neuron_t*> nnet)   // Control the refreshmet of all
 
 void Global_OutputGenerator(vector<Neuron_t*> nnet)
 {
-  //gp2 << "plot '-' \n";
-  vector<float>  vec;
+  
+  gp2 << "plot '-' \n";
+  vector<float> vec;
   for(int i = 0; i < nnet.size(); i++)
   {
-    for(int j = 0; j < nnet[i]->Dendrites.size(); j++)
+    //nnet[i]->OldOutput = nnet[i]->Output;
+    /*for(int j = 0; j < nnet[i]->Dendrites.size(); j++)
     {  
       if(nnet[i]->Dendrites[j]->TimerTicks())   // As the packets near the destination, transfer them from the neurite ends to the neurons
       {
@@ -143,16 +150,20 @@ void Global_OutputGenerator(vector<Neuron_t*> nnet)
         nnet[i]->Sum += val;
         nnet[i]->ComputeOutput();
       }
-    }
-    vec.push_back(nnet[i]->Output);
+    } */
+    /*if(nnet[i]->Output != nnet[i]->OldOutput)
+    {
+      printf("<<%f>>", nnet[i]->Output);
+    }*/
+    vec.push_back(nnet[i]->ComputeOutput());
   }
-  //gp2.send1d(vec);
+  gp2.send1d(vec);
 }
 
 void Global_ForwardProcessor(vector<Neurite_t<Neuron_t, Neuron_t>*> dnet)
 {
   //printf("\n.");
-  gp << "plot '-' \n";
+  //gp << "plot '-' \n";
   for(int i = 0; i < dnet.size(); i++)
   {
     //printf("%d-", i);
@@ -184,5 +195,5 @@ void Global_ForwardProcessor(vector<Neurite_t<Neuron_t, Neuron_t>*> dnet)
       dnet[i]->End->ComputeOutput();
     }
   }
-  gp.send1d(plotVecNN);
+ // gp.send1d(plotVecNN);
 }

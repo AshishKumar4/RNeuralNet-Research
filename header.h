@@ -25,7 +25,7 @@ using namespace std;
 
 float RewardGenerated = 0;
 
-vector<float>  plotVecNN;
+vector<float>  plotVecNN, plotVecON;
 
 class Packets_t
 {

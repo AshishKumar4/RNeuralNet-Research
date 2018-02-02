@@ -58,7 +58,7 @@ void Neurite_t<In, Out>::WeightPostProcessor()  // Adjusts weights; Prev means n
   }
   this->softmax_tmp = expf(this->Start->OldOutput);   // Compute e^(output of this specific prev neuron)
   this->softmax_tmp /= this->End->softmax_tmp;  // Get the softmax Ratio*/
-  this->Start->outVar += 1;   // Tell the start neron that another output neuron has been updated
+//  this->Start->outVar += 1;   // Tell the start neron that another output neuron has been updated
   this->End->inVar += 1;    // Tell the end neuron that another input neuron has been updated
   lr *= this->softmax_tmp; // Compute amount to add to weight
   this->softmax_tmp = lr;  // set this computed amount in this softmax temp variable

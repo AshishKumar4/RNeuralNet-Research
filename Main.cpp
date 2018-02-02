@@ -127,13 +127,15 @@ void NeuralNet_init()
 
   RewardFeederNeuron = new Neuron_t(0, 3);
   //For Output Layer
+  /*
   for(int i = 0; i < out; i++)
   {
     tmpn = new Neuron_t(0, 1);
     output_layer.push_back(tmpn);
     tmpn->LocalReward = 0;
-    GreyMatter.push_back(Connect_Neurons(tmpn, RewardFeederNeuron, 1, 1));
-    for(int j = 0; j < 10; j++)
+    GreyMatter.push_back(Connect_Neurons(tmpn, RewardFeederNeuron, 1, 4));
+    //Connect_Neurons(tmpn, RewardFeederNeuron, 1, 4);
+    for(int j = 0; j < 16; j++)
     {
       tmp11 = 0;
       back3:
@@ -142,7 +144,8 @@ void NeuralNet_init()
       if(find(ttn.begin(), ttn.end(), NeuralNet[rand1]) == ttn.end())
       {
         //normal_distribution<double> dis2(0, 1/(pow(MAX_AXIONS, 0.5)));
-        GreyMatter.push_back(Connect_Neurons(NeuralNet[rand1], tmpn, 1, 1));
+        GreyMatter.push_back(Connect_Neurons(NeuralNet[rand1], tmpn, 1, 4));
+        //Connect_Neurons(NeuralNet[rand1], tmpn, 1, 4);
         ttn.push_back(NeuralNet[rand1]);
       }
       else
@@ -152,7 +155,33 @@ void NeuralNet_init()
       }
     }
   }
-/**
+    /*/
+
+    for(int i = 0; i < out; i++)
+    {
+      tmp11 = 0;
+      plotVecON.push_back(0);
+      back3:
+      rand1 = rand()%(Neurons-1);
+      tmpn = NeuralNet[rand1];
+      
+      if(tmp11 == Neurons)  break;
+      if(find(ttn.begin(), ttn.end(), tmpn) == ttn.end())
+      {
+        output_layer.push_back(tmpn);
+        GreyMatter.push_back(Connect_Neurons(tmpn, RewardFeederNeuron, 1, 4));
+        //normal_distribution<double> dis2(0, 1/(pow(MAX_AXIONS, 0.5)));
+        //GreyMatter.push_back(Connect_Neurons(input_layer[rand1], tmpn, 1, 1));
+        ttn.push_back(tmpn);
+        
+      }
+      else
+      {
+        ++tmp11;
+        goto back3;
+      }
+    }//*/
+/*
   for(int i = 0; i < out; i++)
   {
     NeuralNet.push_back(output_layer[i]);
@@ -182,7 +211,7 @@ void OutputThread()
 {
   while(1)
   {
-    Global_OutputGenerator(output_layer);
+    //Global_OutputGenerator(output_layer);
   }
 }
 
@@ -191,6 +220,8 @@ void ForwardPropogatorThread()
   while(1)
   {
     Global_ForwardProcessor(GreyMatter);
+    Global_OutputGenerator(output_layer);
+   // Global_Adjuster(input_layer);
   }
 }
 
@@ -198,7 +229,6 @@ void LearnerThread()
 {
   //while(1)
   {
-    Global_Adjuster(input_layer);
     //printf("\n\nDOne!!");
   }
 }
